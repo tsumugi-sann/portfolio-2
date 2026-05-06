@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品詳細 - ROS 2 パッケージ開発</title>
+    <style>
+        /* 1. スムーススクロールの設定（これ1行で滑らかになります！） */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.8;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            color: #2980b9;
+            border-bottom: 3px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 30px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #95a5a6;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .back-btn:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .image-gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 30px 0;
+            align-items: center;
+        }
+
+        .image-gallery img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            /* マウスカーソルを「指のマーク」にしてクリックできることをアピール */
+            cursor: pointer; 
+        }
+        .image-gallery img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        /* 2. 画像拡大モーダル用のデザイン */
+        .modal {
+            display: none; /* 初期状態では隠しておく */
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* 背景を半透明の黒に */
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 5px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-btn:hover {
+            color: #e74c3c;
+        }
+
+        /* 3. 画面右下の「トップへ戻る」ボタンのデザイン */
+        .page-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #2980b9;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 900;
+        }
+        .page-top-btn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .page-top-btn:hover {
+            background-color: #3498db;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body id="top"> <!-- トップへ戻るための目印（id="top"）を追加 -->
+
+    <header>
+        <h1>作品詳細</h1>
+    </header>
+
+    <div class="container">
+        <h2>6. ROS 2 パッケージ開発 (暗号解読通信 ＆ ロボット走行評価)</h2>
+
+        <h3>■ 概要</h3>
+        <p>
+            ROS 2環境を用いて開発した、2つの実践的なシステムパッケージです。<br>
+            前半は、5つのノードが順番にトピック通信を行い、暗号文を段階的に復号していく「伝言ゲーム型の暗号解読システム」を構築しました。<br>
+            後半は、Gazeboシミュレータ上でTurtleBot3を手動操作し、障害物に囲まれた外周を走行させる評価システムです。走行軌跡や移動距離を記録し、その結果に基づいてS~Dのランク評価を自動で出力する仕組みを実装しました。
+        </p>
+
+        <h3>■ システムの実行と可視化</h3>
+        <p>以下の画像は、実際にシステムを起動した際の様子と、通信構造の可視化結果です。（画像をクリックで拡大）</p>
+        
+        <div class="image-gallery">
+            <!-- class="zoom-img" を追加してJSで操作できるようにしました -->
+            <img src="ros1.png" alt="ROS 2 実行画面1" class="zoom-img">
+            <img src="ros2.png" alt="ROS 2 実行画面2" class="zoom-img">
+        </div>
+
+        <h3>■ 使用技術・実装機能</h3>
+        <ul>
+            <li><strong>ROS 2トピック通信:</strong> 複数のノード（復号ノード群、動作制御、位置ログなど）を連携させた分散処理システム。</li>
+            <li><strong>Gazeboシミュレーション:</strong> 仮想空間上でのTurtleBot3の挙動制御と、カスタムワールド（empty_worldベース）の構築実験。</li>
+            <li><strong>データのロギングと活用:</strong> /odomからの位置情報を取得し、軌跡データとしてCSVファイルに保存・追記する機能。</li>
+            <li><strong>評価・ランキングシステム:</strong> 走行距離に応じたランク（S~D）の算出と、過去の走行記録をソートして表示する機能（rank_distance_node.py）の実装。</li>
+        </ul>
+
+       
+
+        <a href="index.html#work6" class="back-btn">← トップページに戻る</a>
+    </div>
+
+    <!-- 画像拡大用のモーダル枠（最初は隠れています） -->
+    <div id="imageModal" class="modal">
+        <span class="close-btn" id="modalClose">&times;</span>
+        <img id="modalImage" src="" alt="拡大画像">
+    </div>
+
+    <!-- 画面右下に固定表示されるトップへ戻るボタン -->
+    <a href="#top" id="pageTopBtn" class="page-top-btn">↑</a>
+
+    <!-- ここからJavaScript（動きをつけるためのプログラム） -->
+    <script>
+        // 1. 画像拡大モーダルの仕組み
+        const zoomImages = document.querySelectorAll('.zoom-img');
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeBtn = document.getElementById('modalClose');
+
+        // 画像をクリックしたらモーダルを表示
+        zoomImages.forEach(img => {
+            img.addEventListener('click', function() {
+                modalImage.src = this.src; // クリックした画像のパスをモーダルに渡す
+                modal.classList.add('show');
+            });
+        });
+
+        // ×ボタン、または背景（黒い部分）をクリックしたらモーダルを閉じる
+        closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+
+        // 2. スクロールに合わせて「トップへ戻るボタン」を表示/非表示にする仕組み
+        const pageTopBtn = document.getElementById('pageTopBtn');
+        window.addEventListener('scroll', () => {
+            // 上から300px以上スクロールしたらボタンを表示
+            if (window.scrollY > 300) {
+                pageTopBtn.classList.add('show');
+            } else {
+                pageTopBtn.classList.remove('show');
+            }
+        });
+    </script>
+
+</body>
+</html>

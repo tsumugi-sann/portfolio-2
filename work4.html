@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品詳細 - 音声合成とスペクトログラム解析</title>
+    <style>
+        /* スムーススクロール */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.8;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        /* コンテナのホバーアニメーション */
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            color: #2980b9;
+            border-bottom: 3px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        /* 戻るボタンのホバーアニメーション */
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #95a5a6;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .back-btn:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        /* --- 4枚の画像を綺麗に並べるグリッドデザイン --- */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2列に分割 */
+            gap: 20px; /* 画像と画像の隙間 */
+            margin: 30px 0;
+        }
+        .image-gallery figure {
+            margin: 0;
+            text-align: center;
+        }
+        
+        /* 画像のホバーアニメーションとカーソル設定 */
+        .image-gallery img {
+            width: 100%; /* 枠に合わせて自動リサイズ */
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer; /* クリックできることを明示 */
+        }
+        .image-gallery img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .image-gallery figcaption {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* スマホなどの狭い画面では1列にする設定 */
+        @media (max-width: 600px) {
+            .image-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* モーダルのデザイン */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 5px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-btn:hover {
+            color: #e74c3c;
+        }
+
+        /* トップへ戻るボタンのデザイン */
+        .page-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #2980b9;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 900;
+        }
+        .page-top-btn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .page-top-btn:hover {
+            background-color: #3498db;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body id="top">
+
+    <header>
+        <h1>作品詳細</h1>
+    </header>
+
+    <div class="container">
+        <h2>3. 音声合成とスペクトログラム解析 (MATLAB)</h2>
+
+        <h3>■ 概要</h3>
+        <p>
+            MATLABを用いたデジタル信号処理の基礎を学ぶためのプログラム群です。基本的なサイン波の生成から始まり、サンプリング定理に基づく折り返し雑音（エイリアシング）の確認や、コサイン関数を用いたエンベロープ（包絡線）による自然なフェードイン・フェードアウト処理を行っています。さらに、複数の倍音や非整数倍音を加算合成して金属的な音色変化を分析したり、録音した実際の音声（パフパフラッパ）に対してFFT（高速フーリエ変換）を行い、時間波形・スペクトル・スペクトログラムの3つの視点から音の特徴を視覚的かつ論理的に解析する手法を実装しました。
+        </p>
+
+        <h3>■ 解析結果（波形とスペクトログラム）</h3>
+        <p>画像をクリックすると拡大表示されます。</p>
+        <!-- 4枚の画像を配置するギャラリー部分 -->
+        <div class="image-gallery">
+            <figure>
+                <!-- クラス zoom-img を追加 -->
+                <img src="onn1.png" alt="サイン波の生成" class="zoom-img">
+                <figcaption>基本波形の生成とエイリアシング確認</figcaption>
+            </figure>
+            <figure>
+                <!-- クラス zoom-img を追加 -->
+                <img src="onn2.png" alt="エンベロープ処理" class="zoom-img">
+                <figcaption>エンベロープによるフェード処理</figcaption>
+            </figure>
+            <figure>
+                <!-- クラス zoom-img を追加 -->
+                <img src="onn3.png" alt="倍音合成の波形" class="zoom-img">
+                <figcaption>非整数倍音の加算合成と音色変化</figcaption>
+            </figure>
+            <figure>
+                <!-- クラス zoom-img を追加 -->
+                <img src="onn4.png" alt="実音声のスペクトログラム" class="zoom-img">
+                <figcaption>実音声（パフパフラッパ）のFFT解析</figcaption>
+            </figure>
+        </div>
+
+        <h3>■ 使用技術・分析手法</h3>
+        <ul>
+            <li>MATLAB (デジタル信号処理)</li>
+            <li>FFT（高速フーリエ変換）による周波数解析</li>
+            <li>スペクトログラムを用いた時間・周波数の2次元解析</li>
+            <li>加算合成とエンベロープ（包絡線）制御</li>
+            <li>サンプリング定理に基づくエイリアシングの考察</li>
+        </ul>
+
+        <a href="index.html#work4" class="back-btn">← トップページに戻る</a>
+    </div>
+
+    <!-- モーダル枠 -->
+    <div id="imageModal" class="modal">
+        <span class="close-btn" id="modalClose">&times;</span>
+        <img id="modalImage" src="" alt="拡大画像">
+    </div>
+
+    <!-- トップへ戻るボタン -->
+    <a href="#top" id="pageTopBtn" class="page-top-btn">↑</a>
+
+    <!-- JavaScript -->
+    <script>
+        // 画像拡大モーダル
+        const zoomImages = document.querySelectorAll('.zoom-img');
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeBtn = document.getElementById('modalClose');
+
+        zoomImages.forEach(img => {
+            img.addEventListener('click', function() {
+                modalImage.src = this.src;
+                modal.classList.add('show');
+            });
+        });
+
+        closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+
+        // トップへ戻るボタンの表示制御
+        const pageTopBtn = document.getElementById('pageTopBtn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                pageTopBtn.classList.add('show');
+            } else {
+                pageTopBtn.classList.remove('show');
+            }
+        });
+    </script>
+
+</body>
+</html>

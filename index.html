@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私のポートフォリオ</title>
+    
+    <style>
+        /* 全体の設定 */
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        /* ① ヒーローセクション */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('1.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+        }
+
+        .start-btn {
+            padding: 15px 40px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .start-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        /* ② メインコンテンツ */
+        .container {
+            width: 85%;
+            max-width: 900px;
+            margin: 50px auto;
+        }
+
+        /* セクションごとの浮遊アニメーション */
+        section {
+            background-color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 40px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* ③ プロフィールカード */
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 30px;
+            background-color: #f8fbfe;
+        }
+        .profile-image img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .profile-image img:hover {
+            transform: scale(1.05);
+        }
+
+        /* ④ 目次のデザイン */
+        .toc {
+            background-color: #ffffff;
+            padding: 25px 35px;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-top: 5px solid #3498db;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        .toc li { margin-bottom: 12px; }
+        .toc a {
+            text-decoration: none;
+            color: #2980b9;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .toc a:hover { color: #e74c3c; text-decoration: underline; }
+        
+        /* ⑤ 自分史（タイムライン） */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: #3498db;
+            top: 0; bottom: 0; left: 20px;
+            border-radius: 2px;
+        }
+        .timeline-item {
+            padding: 10px 0 30px 50px;
+            position: relative;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 16px; height: 16px;
+            left: 14px; top: 15px;
+            background-color: #ffffff;
+            border: 4px solid #3498db;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .timeline-content {
+            background-color: #f8fbfe;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover .timeline-content {
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* ⑥ 作品カード */
+        .work-card {
+            background-color: #ffffff;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+        .work-card:hover {
+            transform: translateX(10px); /* 右に少しズレる動き */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid #2980b9;
+        }
+        .work-card h3 { margin-top: 0; color: #2980b9; }
+        .detail-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 25px;
+            background-color: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .detail-btn:hover {
+            background-color: #34495e;
+            transform: scale(1.05);
+        }
+
+        /* ⑦ シェアボタン */
+        .share-area {
+            text-align: center;
+            margin: 60px 0 20px;
+            padding-top: 30px;
+            border-top: 2px dashed #dcdde1;
+        }
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .share-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px; height: 40px;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .share-btn:hover { transform: translateY(-3px); opacity: 0.8; }
+        .btn-fb { background-color: #3b5998; }
+        .btn-x { background-color: #000; }
+        .btn-line { background-color: #06c755; }
+        .btn-copy { background-color: #6c757d; cursor: pointer; border: none; }
+
+        /* ⑧ モーダル＆トップボタン */
+        .modal {
+            display: none; position: fixed; z-index: 1000;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal.show { display: flex; opacity: 1; }
+        .modal img { max-width: 90%; max-height: 90%; border-radius: 8px; }
+        
+        .page-top-btn {
+            position: fixed; bottom: 30px; right: 30px;
+            background-color: #3498db; color: white;
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            text-decoration: none; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 100; transition: all 0.3s;
+            opacity: 0; visibility: hidden;
+        }
+        .page-top-btn.show { opacity: 1; visibility: visible; }
+        .page-top-btn:hover { background-color: #2c3e50; transform: translateY(-5px); }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background-color: #2c3e50;
+            color: white;
+        }
+    </style>
+</head>
+
+    </video>
+    <div class="hero">
+        <h1>私のポートフォリオ</h1>
+        <p>自己紹介とプログラミング学習の記録と作品集</p>
+        <a href="#main-content" class="start-btn">続きを見る</a>
+    </div>
+
+    <div class="container" id="main-content">
+        <!-- 目次 -->
+        <nav class="toc">
+            <h2>目次</h2>
+          <ul>
+                <li><a href="#profile">プロフィール</a></li>
+                <li><a href="#history">自分史</a></li>
+                <li><a href="#works">これまでのプログラミング作品(一部)</a>
+                    <ul>
+                        <li><a href="#work1">1. キーボード紹介デスクトップアプリ (Java)</a></li>
+                        <li><a href="#work2">2. 成績データの統計計算プログラム (C言語)</a></li>
+                        <li><a href="#work4">3. 音声合成とスペクトログラム解析 (MATLAB)</a></li>
+                        <li><a href="#work5">4. 3自由度ロボットアームの障害物回避制御 (MATLAB)</a></li>
+                        <li><a href="#work6">5. ROS 2 パッケージ開発 (Python)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- プロフィール -->
+        <section id="profile">
+            <h2>プロフィール</h2>
+            <div class="profile-card">
+                <div class="profile-image">
+                    <img src="2.png" alt="篠原 紬希のイラスト" class="zoom-img">
+                </div>
+                <div class="profile-text">
+                    <p><strong>篠原 紬希 (Tsumugi Shinohara)</strong></p>
+                    <p>
+                        現在はPythonを主に学んでおり他にもJava,C言語などを学んできました。このサイトはwebサイト制作の復習もかねて作ったものです。
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 自分史 -->
+        <section id="history">
+            <h2>自分史</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>幼少期：岐阜県可児市でのびのびと育つ</h3>
+                        <p>岐阜県可児市で生まれる。好奇心旺盛で活発な、やんちゃな幼少期を過ごす。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>小学生：怪我を乗り越えた日々の自主練習</h3>
+                        <p>バスケットボールを始める。自宅近くで毎日のように自主練習に打ち込み、6年生のころには背番号6番をもらい大会で準優勝を果たす。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>中学生：絶望からのサポート、挫折から立ち上がる力</h3>
+                        <p>バスケ部でレギュラー入りするも大会直前に怪我。裏方としてチームを支え県ベスト6を達成。「挫折しても腐らずやり抜く力」を身につける。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>高校生：文武両道と、徹底した「継続力」の習得</h3>
+                        <p>弓道部と勉強を両立。筋トレに目覚め、食生活管理を通じて「目標へコツコツ継続する力」を学ぶ。受験では趣味を封印し全力を注いだ。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>大学生：趣味と実益の融合、ハードウェアへの探究</h3>
+                        <p>情報工学を学びつつ、ハードオフでのアルバイトを開始。HDDの診断やメンテナンス等、技術と趣味がシームレスに繋がる現在に至る。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 作品紹介 -->
+        <section id="works">
+            <h2>これまでのプログラミング作品(一部)</h2>
+
+            <div class="work-card" id="work1">
+                <h3>1. キーボード紹介デスクトップアプリ (Java)</h3>
+                <p>ユーザーの目的に合わせて最適なキーボードを提案する、Swingを用いたGUIアプリケーションです。</p>
+                <a href="work1.html" class="detail-btn">詳細を見る</a>
+            </div>
+
+            <div class="work-card" id="work2">
+                <h3>2. 成績データの統計計算プログラム (C言語)</h3>
+                <p>2次元配列と関数のモジュール化を活用した、保守性の高い成績集計プログラムです。</p>
+                <a href="work2.html" class="detail-btn">詳細を見る</a>
+            </div>
+
+            <div class="work-card" id="work4">
+                <h3>3. 音声合成とスペクトログラム解析 (MATLAB)</h3>
+                <p>デジタル信号処理による音色合成と、FFTを用いた音声波形の解析プログラムです。</p>
+                <a href="work4.html" class="detail-btn">詳細を見る</a>
+            </div>
+
+           <div class="work-card" id="work5">
+                <h3>4. 3自由度ロボットアームの障害物回避制御 (MATLAB)</h3>
+                <p>冗長自由度と勾配射影法を活用し、手先の軌道追従と障害物回避を同時に実現する高度な制御シミュレーションです。</p>
+                <a href="work5.html" class="detail-btn">詳細を見る</a>
+            </div>
+            
+            <div class="work-card" id="work6">
+                <h3>5. ROS 2 パッケージ開発 (Python)</h3>
+                <p>トピック通信を用いた暗号解読システムと、Gazebo上のTurtleBot3の走行軌跡・距離を評価する実践的なシステム群です。</p>
+                <a href="work6.html" class="detail-btn">詳細を見る</a>
+            </div>
+        </section>
+        
+        <!-- シェアボタン -->
+        <div class="share-area">
+            <p class="share-title">＼ よかったらシェアしてね！ ／</p>
+            <div class="share-buttons">
+                <a href="#" class="share-btn btn-fb">f</a>
+                <a href="#" class="share-btn btn-x">&#x1D54F;</a>
+                <a href="#" class="share-btn btn-line">LINE</a>
+                <button class="share-btn btn-copy" onclick="copyUrl()">&#x1F4CB;</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 ポートフォリオサイト</p>
+    </footer>
+
+    <!-- 拡大モーダル -->
+    <div id="imageModal" class="modal">
+        <img id="modalImage" src="" alt="拡大画像">
+    </div>
+
+    <!-- トップへ戻る -->
+   
+    
+    <a href="javascript:void(0)" id="pageTopBtn" class="page-top-btn" onclick="scrollToTop()">↑</a>
+
+    <script>
+        // URLコピー機能
+        function copyUrl() {
+            navigator.clipboard.writeText(window.location.href).then(function() {
+                alert("URLをコピーしました！");
+            });
+        }
+
+        // 画像拡大機能
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        document.querySelectorAll('.zoom-img').forEach(img => {
+            img.onclick = function() {
+                modal.classList.add('show');
+                modalImg.src = this.src;
+            }
+        });
+        modal.onclick = function() { modal.classList.remove('show'); }
+
+       // 1. ヌルっと上にスクロールする関数
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // これがJavaScript版の「ヌルっと」です
+        });
+    }
+
+    // 2. ボタンの表示・非表示（これは今のままでもOKですが、念のため）
+    const topBtn = document.getElementById('pageTopBtn');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 400) { 
+            topBtn.classList.add('show'); 
+        } else { 
+            topBtn.classList.remove('show'); 
+  
+        }
+    });
+</script>
+</body>
+</html>

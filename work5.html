@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品詳細 - ロボットアームの障害物回避制御</title>
+    <style>
+        /* スムーススクロール */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.8;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        /* コンテナのホバーアニメーション */
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            color: #2980b9;
+            border-bottom: 3px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        /* 戻るボタンのホバーアニメーション */
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #95a5a6;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .back-btn:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        /* --- 2枚の画像を並べるデザイン --- */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .image-gallery figure {
+            margin: 0;
+            text-align: center;
+        }
+        
+        /* 画像のホバーアニメーションとカーソル設定 */
+        .image-gallery img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer; /* クリックできることを明示 */
+        }
+        .image-gallery img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .image-gallery figcaption {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .image-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- 折りたたみソースコード用のデザイン --- */
+        details {
+            margin: 20px 0;
+            border: 1px solid #dcdde1;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        summary {
+            padding: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            outline: none;
+            color: #2c3e50;
+        }
+        summary:hover {
+            background-color: #dfe6e9;
+        }
+        pre {
+            margin: 0;
+            padding: 20px;
+            background-color: #2f3640;
+            color: #f5f6fa;
+            overflow-x: auto;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        /* モーダルのデザイン */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 5px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-btn:hover {
+            color: #e74c3c;
+        }
+
+        /* トップへ戻るボタンのデザイン */
+        .page-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #2980b9;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 900;
+        }
+        .page-top-btn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .page-top-btn:hover {
+            background-color: #3498db;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body id="top">
+
+    <header>
+        <h1>作品詳細</h1>
+    </header>
+
+    <div class="container">
+        <h2>4. 3自由度ロボットアームの障害物回避制御 (MATLAB)</h2>
+
+        <h3>■ 概要</h3>
+        <p>
+            3自由度平面マニピュレータを対象に、決められたルートを手先が正確になぞりつつ、同時に障害物を回避できる制御プログラムを作成する実験です。まず3次多項式を用いて滑らかな手先位置・速度軌道を生成し、最小ノルム解（擬似逆行列）による基本的な逆運動学制御を実装しました。しかし、この手法ではロボットが関節の移動量を最小化しようと「腕を垂らす」動きになり、障害物に衝突してしまいます。そこでロボットが持つ「冗長自由度」を活用し、零空間射影行列と勾配射影法を用いた制御則を実装しました。これにより、手先の軌道追従（主タスク）を維持したまま、肘を高く上げる姿勢変更（副タスク）を同時に行い、安全に障害物を回避することに成功しました。
+        </p>
+
+        <h3>■ 解析結果（衝突判定と回避の比較）</h3>
+        <p>画像をクリックすると拡大表示されます。</p>
+        <div class="image-gallery">
+            <figure>
+                <!-- クラス zoom-img を追加 -->
+                <img src="ro1.png" alt="回避なし時の衝突グラフ" class="zoom-img">
+                <figcaption>単純な擬似逆行列制御による障害物への衝突</figcaption>
+            </figure>
+            <figure>
+                <!-- クラス zoom-img を追加 -->
+                <img src="ro2.png" alt="回避成功時のグラフ" class="zoom-img">
+                <figcaption>勾配射影法と冗長自由度を活用した回避成功</figcaption>
+            </figure>
+        </div>
+
+        <h3>■ 使用技術・工夫点</h3>
+        <ul>
+            <li>MATLABによる逆運動学および幾何学的衝突判定のシミュレーション</li>
+            <li>3次多項式を用いた滑らかな軌道（C1級）の生成</li>
+            <li>ムーア・ペンローズの擬似逆行列を用いた最小ノルム速度の算出</li>
+            <li>零空間射影行列（勾配射影法）によるタスクの分離（デカップリング）</li>
+            <li>手先軌道（主タスク）に影響を与えずに目標姿勢へ収束させるP制御の実装</li>
+        </ul>
+
+        <h3>■ ソースコード（抜粋：冗長制御による障害物回避シミュレーション）</h3>
+        <details>
+            <summary>ソースコードを表示する（クリックで開閉）</summary>
+<pre><code>%課題5: 冗長制御による障害物回避(詳細グラフ版)
+clear; clc; close all;
+
+% === 1. ユーザーパラメータ設定 ===
+K = 5.0; % ゲイン
+
+% 能動的回避のための目標姿勢[deg]
+target_q_deg = [60; -120; 0];
+
+% === 2. シミュレーション準備 ===
+l1 = 1.0; l2 = 1.0; l3 = 0.3;
+tf = 2.0; dt = 0.01;
+t_span = 0:dt:tf;
+
+% 障害物定義
+obs_lines = [
+    0.5,  0.0, 1.1,  0.0;
+    0.5,  0.0, 0.5, -0.3;
+    1.1,  0.0, 1.1, -0.3;
+    0.5, -0.3, 1.1, -0.3
+];
+
+% 初期姿勢[rad]
+q0 = deg2rad([20; 30; 20]);
+q_target = deg2rad(target_q_deg);
+H2 = K * eye(3);
+
+% === 3. シミュレーション実行 ===
+% (A) Task 3: 回避なしゲイン (0)
+[dist3, q3, r3] = run_simulation(l1, l2, l3, q0, t_span, obs_lines, q0, zeros(3,3));
+% (B) Task 5: 回避あり
+[dist5, q5, r5] = run_simulation(l1, l2, l3, q0, t_span, obs_lines, q_target, H2);
+
+% --- 関数定義 ---
+function [dist_hist, q_hist, r_hist] = run_simulation(l1, l2, l3, q0, t_span, obs_lines, q_target, H2)
+    steps = length(t_span); dt = t_span(2) - t_span(1);
+    q = zeros(3, steps); q(:,1) = q0;
+    r_hist = zeros(2, steps); dist_hist = zeros(1, steps);
+
+    for i = 1:steps
+        t = t_span(i); q_now = q(:,i);
+        
+        % 順運動学
+        p1 = [l1*cos(q_now(1)); l1*sin(q_now(1))];
+        p2 = p1 + [l2*cos(q_now(1)+q_now(2)); l2*sin(q_now(1)+q_now(2))];
+        p3 = p2 + [l3*cos(sum(q_now)); l3*sin(sum(q_now))];
+        r_hist(:,i) = p3;
+        
+        % 距離計算
+        dist_hist(i) = calc_min_dist(q_now, l1, l2, l3, obs_lines);
+        
+        if i < steps
+            % 逆運動学
+            J = get_jacobian(q_now, l1, l2, l3);
+            J_pinv = pinv(J);
+            vy = -2.535*t^2 + 1.2675*t^2; % (注: レポートの式に基づく略記)
+            
+            % 冗長制御則: q_dot = J#*r_dot + (I - J#*J) * H2 * (q* - q)
+            null_term = (eye(3) - J_pinv*J) * H2 * (q_target - q_now);
+            q_dot = J_pinv * [0; vy] + null_term;
+            
+            q(:,i+1) = q(:,i) + q_dot * dt;
+        end
+    end
+    q_hist = q;
+end</code></pre>
+        </details>
+
+        <a href="index.html#work5" class="back-btn">← トップページに戻る</a>
+    </div>
+
+    <!-- モーダル枠 -->
+    <div id="imageModal" class="modal">
+        <span class="close-btn" id="modalClose">&times;</span>
+        <img id="modalImage" src="" alt="拡大画像">
+    </div>
+
+    <!-- トップへ戻るボタン -->
+    <a href="#top" id="pageTopBtn" class="page-top-btn">↑</a>
+
+    <!-- JavaScript -->
+    <script>
+        // 画像拡大モーダル
+        const zoomImages = document.querySelectorAll('.zoom-img');
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeBtn = document.getElementById('modalClose');
+
+        zoomImages.forEach(img => {
+            img.addEventListener('click', function() {
+                modalImage.src = this.src;
+                modal.classList.add('show');
+            });
+        });
+
+        closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+
+        // トップへ戻るボタンの表示制御
+        const pageTopBtn = document.getElementById('pageTopBtn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                pageTopBtn.classList.add('show');
+            } else {
+                pageTopBtn.classList.remove('show');
+            }
+        });
+    </script>
+
+</body>
+</html>

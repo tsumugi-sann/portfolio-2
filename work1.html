@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品詳細 - キーボード紹介アプリ</title>
+    <style>
+        /* スムーススクロール */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.8;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        /* コンテナのホバーアニメーション */
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            color: #2980b9;
+            border-bottom: 3px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        /* 戻るボタンのホバーアニメーション */
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #95a5a6;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .back-btn:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        /* --- 単一画像用の中央配置デザイン --- */
+        .single-image {
+            text-align: center;
+            margin: 30px 0;
+        }
+        /* 画像のホバーアニメーションとカーソル設定 */
+        .single-image img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer; /* クリックできることを明示 */
+        }
+        .single-image img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        /* --- 折りたたみソースコード用のデザイン --- */
+        details {
+            margin: 20px 0;
+            border: 1px solid #dcdde1;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        summary {
+            padding: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            outline: none;
+            color: #2c3e50;
+        }
+        summary:hover {
+            background-color: #dfe6e9;
+        }
+        pre {
+            margin: 0;
+            padding: 20px;
+            background-color: #2f3640;
+            color: #f5f6fa;
+            overflow-x: auto;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        /* モーダルのデザイン */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 5px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-btn:hover {
+            color: #e74c3c;
+        }
+
+        /* トップへ戻るボタンのデザイン */
+        .page-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #2980b9;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 900;
+        }
+        .page-top-btn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .page-top-btn:hover {
+            background-color: #3498db;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body id="top">
+
+    <header>
+        <h1>作品詳細</h1>
+    </header>
+
+    <div class="container">
+        <h2>1. キーボード紹介デスクトップアプリ (Java)</h2>
+        
+        <!-- 画像を中央配置し、拡大機能（zoom-img）を適用 -->
+        <div class="single-image">
+            <img src="3.png" alt="アプリの実行画面" class="zoom-img">
+        </div>
+
+        <h3>■ 概要</h3>
+        <p>
+            Javaの標準ライブラリである「Swing」を用いて開発した、ユーザーに最適なキーボードを提案するデスクトップアプリケーションです。最初の画面で「ゲームで使う」「コンパクト」「オシャレ」といった使用目的をチェックボックス形式で複数選択させ、次の画面で「高い」などの4段階の価格帯をボタンで指定させます。入力された条件の組み合わせをプログラム内部で判定し、条件に合致する具体的なキーボードの製品名とその画像を画面中央に動的にリサイズして表示します。また、画面遷移に合わせて自動で音声ファイルが再生される機能も実装し、UIの使いやすさや視覚・聴覚的な演出にもこだわって設計しました。
+        </p>
+
+        <h3>■ 使用技術・工夫点</h3>
+        <ul>
+            <li>Java (Swing, AWT) を用いたGUI開発</li>
+            <li>BorderLayoutとBoxLayoutを組み合わせた画面レイアウト</li>
+            <li>選択条件の組み合わせに応じた動的な画面遷移ロジック</li>
+            <li>AudioSystemを利用したBGM・効果音の再生機能</li>
+            <li>画像サイズの自動スケーリング処理</li>
+        </ul>
+
+        <h3>■ ソースコード</h3>
+        <details>
+            <summary>ソースコードを表示する（クリックで開閉）</summary>
+<pre><code>import java.awt.*;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+
+public class BasicSystem extends JFrame {
+    JPanel TitlePanel = null;
+    JPanel FacePanel = null;
+    JPanel SelectPanel = null;
+
+    public static void main(String[] args) {
+        new BasicSystem();
+    }
+
+    public BasicSystem() {
+        this.setTitle("キーボード紹介");
+        this.setSize(900, 700);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setVisible(true);
+        showMainPage();
+    }
+
+    public void showMainPage() {
+        // 既存パネルの削除
+        if (TitlePanel != null) {
+            this.remove(TitlePanel);
+            this.remove(FacePanel);
+            this.remove(SelectPanel);
+        }
+
+        // 新しいパネルの作成
+        TitlePanel = new JPanel();
+        FacePanel = new JPanel(new BorderLayout()); // 中央揃えにするためのレイアウトに変更
+        SelectPanel = new JPanel();
+        SelectPanel.setLayout(new BoxLayout(SelectPanel, BoxLayout.Y_AXIS));
+
+        // タイトルラベル
+        JLabel label = new JLabel("&lt;html&gt;&lt;font size=7&gt;キーボード紹介をするよ&lt;/font&gt;&lt;/html&gt;");
+        TitlePanel.add(label);
+
+        // 画像の表示
+        ImageIcon icon = new ImageIcon("標準.png");
+        Image image0 = icon.getImage();
+        Image newimg0 = image0.getScaledInstance(500, 300, java.awt.Image.SCALE_SMOOTH);
+        icon = new ImageIcon(newimg0);
+        JLabel photo = new JLabel(icon);
+        FacePanel.add(photo, BorderLayout.CENTER); // 画像を中央に配置
+
+        // 「あなたの目的を選んでね」のメッセージラベルを画像の下に追加
+        JLabel instructionLabel = new JLabel("&lt;html&gt;&lt;font size=5&gt;あなたの目的を選んでね&lt;/font&gt;&lt;/html&gt;");
+        instructionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        FacePanel.add(instructionLabel, BorderLayout.SOUTH);
+
+        // チェックボックスの作成
+        JCheckBox checkBox1 = new JCheckBox("ゲームで使う");
+        JCheckBox checkBox2 = new JCheckBox("コンパクト");
+        JCheckBox checkBox3 = new JCheckBox("オシャレ");
+
+        // 中央揃えのパネルにチェックボックスを追加
+        JPanel checkBoxPanel = new JPanel();
+        checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.Y_AXIS));
+        checkBoxPanel.add(checkBox1);
+        checkBoxPanel.add(checkBox2);
+        checkBoxPanel.add(checkBox3);
+        checkBoxPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        SelectPanel.add(checkBoxPanel);
+
+        // 次のページへ進むボタンとアクションリスナー
+        JButton button = new JButton("Next");
+        button.setAlignmentX(0.5f);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean isSelected1 = checkBox1.isSelected();
+                boolean isSelected2 = checkBox2.isSelected();
+                boolean isSelected3 = checkBox3.isSelected();
+
+                // 選択に基づいて新しいページを開く
+                if (isSelected1 &amp;&amp; !isSelected2 &amp;&amp; !isSelected3) {
+                    openNewPage("ゲームで使うが選ばれました", "Option1");
+                } else if (!isSelected1 &amp;&amp; isSelected2 &amp;&amp; !isSelected3) {
+                    openNewPage("コンパクトが選ばれました", "Option2");
+                } else if (!isSelected1 &amp;&amp; !isSelected2 &amp;&amp; isSelected3) {
+                    openNewPage("オシャレが選ばれました", "Option3");
+                } else if (isSelected1 &amp;&amp; isSelected2 &amp;&amp; !isSelected3) {
+                    openNewPage("ゲームで使うとコンパクトが選ばれました", "Option1_2");
+                } else if (isSelected1 &amp;&amp; !isSelected2 &amp;&amp; isSelected3) {
+                    openNewPage("ゲームで使うとオシャレが選ばれました", "Option1_3");
+                } else if (!isSelected1 &amp;&amp; isSelected2 &amp;&amp; isSelected3) {
+                    openNewPage("コンパクトとオシャレが選ばれました", "Option2_3");
+                } else if (isSelected1 &amp;&amp; isSelected2 &amp;&amp; isSelected3) {
+                    openNewPage("ゲームで使う、コンパクト、オシャレが選ばれました", "Option1_2_3");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select only one or valid combinations.");
+                }
+            }
+        });
+
+        // ボタンを中央揃えのパネルに追加
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setAlignmentX(0.5f);
+        buttonPanel.add(button);
+        SelectPanel.add(buttonPanel);
+
+        // レイアウト設定
+        this.setLayout(new BorderLayout(5, 5));
+        this.add(TitlePanel, BorderLayout.NORTH);
+        this.add(FacePanel, BorderLayout.CENTER);
+        this.add(SelectPanel, BorderLayout.SOUTH);
+
+        this.repaint();
+        this.validate();
+
+        // メインページで自動的に音声を再生
+        playSound("8.wav");
+    }
+
+    private void openNewPage(String pageTitle, String optionType) {
+        JFrame newFrame = new JFrame("価格帯を選んでください");
+        newFrame.setSize(900, 700);
+        newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        newFrame.setLocationRelativeTo(null);
+
+        // 新しいパネルを作成
+        JPanel newTitlePanel = new JPanel();
+        JPanel newFacePanel = new JPanel(new BorderLayout()); // 画像とメッセージの中央揃え
+        JPanel newSelectPanel = new JPanel();
+        newSelectPanel.setLayout(new BoxLayout(newSelectPanel, BoxLayout.Y_AXIS));
+
+        // タイトルラベル
+        JLabel newLabel = new JLabel("&lt;html&gt;&lt;font size=7&gt;価格帯を選んでください&lt;/font&gt;&lt;/html&gt;");
+        newTitlePanel.add(newLabel);
+
+        // 画像の表示
+        ImageIcon newIcon = new ImageIcon("標準.png");
+        Image newImage0 = newIcon.getImage();
+        Image newResizedImg0 = newImage0.getScaledInstance(500, 300, java.awt.Image.SCALE_SMOOTH);
+        newIcon = new ImageIcon(newResizedImg0);
+        JLabel newPhoto = new JLabel(newIcon);
+        newFacePanel.add(newPhoto, BorderLayout.CENTER);
+
+        // 選択目的の表示
+        JLabel selectedPurposeLabel = new JLabel("&lt;html&gt;&lt;font size=5&gt;あなたが選んだ目的: " + pageTitle + "&lt;/font&gt;&lt;/html&gt;");
+        selectedPurposeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        newFacePanel.add(selectedPurposeLabel, BorderLayout.SOUTH);
+
+        // 価格帯選択ボタンの作成
+        JButton optionAButton = new JButton("高い");
+        optionAButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        optionAButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showResult(optionType, "A");
+            }
+        });
+        newSelectPanel.add(optionAButton);
+
+        JButton optionBButton = new JButton("ちょい高い");
+        optionBButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        optionBButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showResult(optionType, "B");
+            }
+        });
+        newSelectPanel.add(optionBButton);
+
+        JButton optionCButton = new JButton("普通");
+        optionCButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        optionCButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showResult(optionType, "C");
+            }
+        });
+        newSelectPanel.add(optionCButton);
+
+        JButton optionDButton = new JButton("安い");
+        optionDButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        optionDButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showResult(optionType, "D");
+            }
+        });
+        newSelectPanel.add(optionDButton);
+
+        // 新しいページのレイアウト設定
+        newFrame.setLayout(new BorderLayout(5, 5));
+        newFrame.add(newTitlePanel, BorderLayout.NORTH);
+        newFrame.add(newFacePanel, BorderLayout.CENTER);
+        newFrame.add(newSelectPanel, BorderLayout.SOUTH);
+
+        newFrame.setVisible(true);
+
+        // 新しいページで自動的に音声を再生
+        playSound("9.wav");
+    }
+
+    private void showResult(String optionType, String option) {
+        String result = "";
+        String imageFile = "";
+
+        // ここから新しい条件分岐を追加
+        if (optionType.equals("Option1")) {
+            switch (option) {
+                case "A": result = "Wooting60HE"; imageFile = "Wooting60HE.jpg"; break;
+                case "B": result = "Logicool G PRO G-PKB-002LNd テンキーレス リニア"; imageFile = "Logicool G PRO G-PKB-002LNd テンキーレス リニア.jpg"; break;
+                case "C": result = "Logicool G G213r 静音設計"; imageFile = "Logicool G G213r 静音設計.jpg"; break;
+                case "D": result = "iClever ゲーミングキーボード テンキーレス"; imageFile = "iClever ゲーミングキーボード テンキーレス.jpg"; break;
+            }
+        } else if (optionType.equals("Option2")) {
+            switch (option) {
+                case "A": result = "Wooting60HE"; imageFile = "Wooting60HE.jpg"; break;
+                case "B": result = "STORIA キーボード Mercury 65"; imageFile = "STORIA キーボード Mercury 65.jpg"; break;
+                case "C": result = "エレコム TK-GK20TBK"; imageFile = "エレコム TK-GK20TBK.jpg"; break;
+                case "D": result = "ブァッファロー BSKBU305BK"; imageFile = "ブァッファロー BSKBU305BK.jpg"; break;
+            }
+        } else if (optionType.equals("Option3")) {
+            switch (option) {
+                case "A": result = "Azio Retro Classic Bluetooth Artisan"; imageFile = "Azio Retro Classic Bluetooth Artisan.jpg"; break;
+                case "B": result = "Ducky One 3 Mini Aura"; imageFile = "Ducky One 3 Mini Aura.jpg"; break;
+                case "C": result = "STORIA キーボード Mercury 65"; imageFile = "STORIA キーボード Mercury 65.jpg"; break;
+                case "D": result = "ロジクール ワイヤレスキーボード PEBBLE KEYS 2 K380sGR"; imageFile = "ロジクール ワイヤレスキーボード PEBBLE KEYS 2 K380sGR.jpg"; break;
+            }
+        } else if (optionType.equals("Option1_2")) {
+            switch (option) {
+                case "A": result = "Wooting60HE"; imageFile = "Wooting60HE.jpg"; break;
+                case "B": result = "Logicool G PRO G-PKB-002LNd テンキーレス リニア"; imageFile = "Logicool G PRO G-PKB-002LNd テンキーレス リニア.jpg"; break;
+                case "C": result = "エレコム V-custom VK300S RGB"; imageFile = "エレコム V-custom VK300S RGB.jpg"; break;
+                case "D": result = "iClever ゲーミングキーボード テンキーレス"; imageFile = "iClever ゲーミングキーボード テンキーレス.jpg"; break;
+            }
+        } else if (optionType.equals("Option1_3")) {
+            switch (option) {
+                case "A": result = "ZENAIM KEYBOARD"; imageFile = "ZENAIM KEYBOARD.jpg"; break;
+                case "B": result = "Logicool G PRO G-PKB-002LNd テンキーレス リニア"; imageFile = "Logicool G PRO G-PKB-002LNd テンキーレス リニア.jpg"; break;
+                case "C": result = "Logicool G G213r パームレスト"; imageFile = "Logicool G G213r パームレスト.jpg"; break;
+                case "D": result = "Merdia メカニカル式ゲーミングキーボード"; imageFile = "Merdia メカニカル式ゲーミングキーボード.jpg"; break;
+            }
+        } else if (optionType.equals("Option2_3")) {
+            switch (option) {
+                case "A": result = "nuphy Air60 V2"; imageFile = "nuphy Air60 V2.jpg"; break;
+                case "B": result = "ロジクール ワイヤレスキーボード PEBBLE KEYS 2 K380sGR"; imageFile = "ロジクール ワイヤレスキーボード PEBBLE KEYS 2 K380sGR.jpg"; break;
+                case "C": result = "Omikamo Bluetooth キーボード"; imageFile = "Omikamo Bluetooth キーボード.jpg"; break;
+                case "D": result = "HINH USB有線キーボード K1000"; imageFile = "HINH USB有線キーボード K1000.jpg"; break;
+            }
+        } else if (optionType.equals("Option1_2_3")) {
+            switch (option) {
+                case "A": result = "ZENAIM KEYBOARD"; imageFile = "ZENAIM KEYBOARD.jpg"; break;
+                case "B": result = "Wooting60HE"; imageFile = "Wooting60HE.jpg"; break;
+                case "C": result = "Logicool G PRO G-PKB-002LNd テンキーレス リニア"; imageFile = "Logicool G PRO G-PKB-002LNd テンキーレス リニア.jpg"; break;
+                case "D": result = "Logicool G G213r 静音設計"; imageFile = "Logicool G G213r 静音設計.jpg"; break;
+            }
+        }
+
+        // 結果の表示
+        JFrame resultFrame = new JFrame("選ばれたキーボード");
+        resultFrame.setSize(600, 600);
+        resultFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        resultFrame.setLocationRelativeTo(null);
+
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new BorderLayout());
+
+        // キーボード名のラベル
+        JLabel nameLabel = new JLabel("&lt;html&gt;&lt;font size=5&gt;" + result + "&lt;/font&gt;&lt;/html&gt;", SwingConstants.CENTER);
+        resultPanel.add(nameLabel, BorderLayout.NORTH);
+
+        // 画像の表示
+        ImageIcon resultIcon = new ImageIcon(imageFile);
+        // 画像をJLabelに合わせてスケーリング
+        Image image = resultIcon.getImage();
+        Image scaledImage = image.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
+        resultIcon = new ImageIcon(scaledImage);
+        JLabel imageLabel = new JLabel(resultIcon, SwingConstants.CENTER);
+        resultPanel.add(imageLabel, BorderLayout.CENTER);
+
+        resultFrame.add(resultPanel);
+        resultFrame.setVisible(true);
+    }
+
+    private void playSound(String soundFileName) {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFileName));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+        </details>
+
+        <a href="index.html#work1" class="back-btn">← トップページに戻る</a>
+    </div>
+
+    <!-- モーダル枠 -->
+    <div id="imageModal" class="modal">
+        <span class="close-btn" id="modalClose">&times;</span>
+        <img id="modalImage" src="" alt="拡大画像">
+    </div>
+
+    <!-- トップへ戻るボタン -->
+    <a href="#top" id="pageTopBtn" class="page-top-btn">↑</a>
+
+    <!-- JavaScript -->
+    <script>
+        // 画像拡大モーダル
+        const zoomImages = document.querySelectorAll('.zoom-img');
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeBtn = document.getElementById('modalClose');
+
+        zoomImages.forEach(img => {
+            img.addEventListener('click', function() {
+                modalImage.src = this.src;
+                modal.classList.add('show');
+            });
+        });
+
+        closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+
+        // トップへ戻るボタンの表示制御
+        const pageTopBtn = document.getElementById('pageTopBtn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                pageTopBtn.classList.add('show');
+            } else {
+                pageTopBtn.classList.remove('show');
+            }
+        });
+    </script>
+
+</body>
+</html>
