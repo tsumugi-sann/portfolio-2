@@ -159,6 +159,49 @@
             background-color: #3498db;
             transform: translateY(-3px);
         }
+
+		/* 画面の横幅が768px以下（スマホ・タブレット）の場合の設定 */
+@media screen and (max-width: 768px) {
+    /* ヒーローセクションの文字を小さくする */
+    .hero h1 {
+        font-size: 2.2rem;
+        padding: 0 10px;
+    }
+    .hero p {
+        font-size: 1.1rem;
+    }
+
+    /* メインコンテンツの横幅を広げる（余白を減らす） */
+    .container {
+        width: 95%;
+        margin: 20px auto;
+    }
+
+    /* セクション内の余白を詰める */
+    section {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* プロフィールを縦並びにする */
+    .profile-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .profile-image img {
+        width: 120px;
+        height: 120px;
+    }
+
+    /* 作品カードのズレる動きをスマホでは無効にする（誤操作防止） */
+    .work-card:hover {
+        transform: none;
+    }
+}
+		
     </style>
 </head>
 <body id="top"> <!-- トップへ戻るための目印（id="top"）を追加 -->
